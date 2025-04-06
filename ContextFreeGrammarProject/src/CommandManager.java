@@ -5,6 +5,35 @@ public class CommandManager {
         this.manager = manager;
     }
 
+    public void handleAddRule(String[] args) {
+        /* Expected format:
+           addRule <grammarId> <ruleId> <leftSide> -> <rightSide> */
+
+        try {
+            String grammarId = args[1];
+            String ruleId = args[2];
+
+            String[] ruleParts = String.join(" ", args)
+                    .split("->", 2);
+
+            if (ruleParts.length != 2) {
+                throw new IllegalArgumentException("Invalid rule format");
+            }
+
+            char leftSide = ruleParts[0].trim()
+                    .split(" ")[2]
+                    .charAt(0);
+            String rightSide = ruleParts[1].trim();
+
+            manager.addRule(grammarId, ruleId, leftSide, rightSide);
+            System.out.println("Added rule " + ruleId + " to grammar " + grammarId);
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            System.out.println("Usage: addRule <grammarId> <ruleId> <leftSide> -> <rightSide>");
+        }
+    }
+
     public void handleHelp() {
         System.out.println("The following commands are supported:");
         System.out.println("open <file> - Opens a file");
