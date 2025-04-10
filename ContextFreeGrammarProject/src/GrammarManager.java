@@ -19,4 +19,20 @@ public class GrammarManager {
         }
         grammar.addRule(ruleId, leftSide, rightSide);
     }
+
+    public boolean isEmpty() {
+        return grammars.isEmpty();
+    }
+
+    public void clearGrammars() {
+        grammars.clear();
+    }
+
+    public Map<String, Grammar> getGrammars() {
+        return grammars;
+    }
+
+    public Grammar getGrammar(String id) {
+        return grammars.get(id);
+    }
 }

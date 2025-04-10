@@ -20,4 +20,9 @@ public class Rule {
     public String getRightSide() {
         return rightSide;
     }
+
+    @Override
+    public String toString() {
+        return id + ": " + leftSide + " -> " + rightSide;
+    }
 }
