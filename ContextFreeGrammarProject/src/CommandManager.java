@@ -111,6 +111,31 @@ public class CommandManager {
         System.out.println("The file has been closed successfully.");
     }
 
+    public void handleSaveAs(String[] args) {
+        if (manager.getGrammars().isEmpty()) {
+            System.out.println("No file is currently open.");
+            return;
+        }
+        if (args == null || args.length < 2) {
+            System.out.println("Usage: saveas <file>");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < args.length; i++) {
+            sb.append(args[i]).append(" ");
+        }
+        String newFilePath = sb.toString().trim();
+
+        try {
+            FileHandler.saveGrammarsToFile(newFilePath, manager.getGrammars());
+            currentFilePath = newFilePath;
+            System.out.println("Successfully saved as " + newFilePath);
+        } catch (IOException e) {
+            System.out.println("Error saving file as: " + e.getMessage());
+        }
+    }
+
     public void handleSave(String[] args) {
         if (currentFilePath == null) {
             System.out.println("No file is currently open.");

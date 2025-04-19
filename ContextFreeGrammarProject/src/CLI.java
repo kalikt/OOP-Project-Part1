@@ -28,7 +28,12 @@ public class CLI {
         commandMap.put("save", () -> {
             commandHandler.handleSave(null);
         });
-        //commandMap.put("saveas", commandHandler::handleSaveAs);
+        commandMap.put("saveas", () -> {
+            System.out.print("Enter new file path: ");
+            String path = scanner.nextLine().trim();
+            String[] args = {"saveas", path};
+            commandHandler.handleSaveAs(args);
+        });
         //commandMap.put("list", commandHandler::handleList);
         commandMap.put("print", () -> {
             System.out.print("Enter grammar ID to print: ");
