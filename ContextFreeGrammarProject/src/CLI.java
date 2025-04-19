@@ -16,16 +16,30 @@ public class CLI {
     }
 
     private void initializeCommands() {
-        //commandMap.put("open", commandHandler::handleOpen);
-        //commandMap.put("close", commandHandler::handleClose);
-        //commandMap.put("save", commandHandler::handleSave);
+        commandMap.put("open", () -> {
+            System.out.print("Enter file path: ");
+            String filePath = scanner.nextLine().trim();
+            String[] args = {"open", filePath};
+            commandHandler.handleOpen(args);
+        });
+        commandMap.put("close", () -> {
+            commandHandler.handleClose(null);
+        });
+        commandMap.put("save", () -> {
+            commandHandler.handleSave(null);
+        });
         //commandMap.put("saveas", commandHandler::handleSaveAs);
         //commandMap.put("list", commandHandler::handleList);
-        //commandMap.put("print", commandHandler::handlePrint);
+        commandMap.put("print", () -> {
+            System.out.print("Enter grammar ID to print: ");
+            String grammarId = scanner.nextLine().trim();
+            String[] args = {"print", grammarId};
+            commandHandler.handlePrint(args);
+        });
         commandMap.put("addRule", () -> {
-            System.out.print("Enter command (addRule <grammarId> <ruleId> <leftSide> -> <rightSide>): ");
+            System.out.print("Enter rule in format <grammarId> <leftSide> -> <rightSide> (e.g., G1 A -> aB): ");
             String input = scanner.nextLine().trim();
-            String[] args = ("addRule " + input).split("\\s+");
+            String[] args = input.split("\\s+");
             commandHandler.handleAddRule(args);
         });
         //commandMap.put("removeRule", commandHandler::handleRemoveRule);
