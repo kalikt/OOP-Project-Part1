@@ -181,17 +181,48 @@ public class CommandManager {
     }
 
     public void handleSave(String[] args) {
-        if (currentFilePath == null) {
-            System.out.println("No file is currently open.");
+        //save
+        if (args == null || args.length == 1) {
+            if (currentFilePath == null) {
+                System.out.println("No file is currently open.");
+                return;
+            }
+            try {
+                FileHandler.saveGrammarsToFile(currentFilePath, manager.getGrammars());
+                System.out.println("Successfully saved " + currentFilePath);
+            } catch (IOException e) {
+                System.out.println("Error saving file: " + e.getMessage());
+            }
             return;
         }
 
-        try {
-            FileHandler.saveGrammarsToFile(currentFilePath, manager.getGrammars());
-            System.out.println("Successfully saved " + currentFilePath);
-        } catch (IOException e) {
-            System.out.println("Error saving file: " + e.getMessage());
+        //save <grammarId> <filename>
+        if (args.length >= 3) {
+            String grammarId = args[1];
+            Grammar grammar = manager.getGrammar(grammarId);
+            if (grammar == null) {
+                System.out.println("Grammar with ID " + grammarId + " not found.");
+                return;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 2; i < args.length; i++) {
+                sb.append(args[i]).append(" ");
+            }
+            String filePath = sb.toString().trim();
+
+            try {
+                FileHandler.saveGrammarToFile(filePath, grammar);
+                System.out.println("Grammar " + grammarId + " saved to " + filePath);
+            } catch (IOException e) {
+                System.out.println("Error saving grammar: " + e.getMessage());
+            }
+            return;
         }
+
+        System.out.println("Usage:");
+        System.out.println("  save                (saves all grammars to the opened file)");
+        System.out.println("  save <id> <file>    (saves grammar <id> to <file>)");
     }
 
     public void handleOpen(String[] args) {
@@ -227,6 +258,7 @@ public class CommandManager {
         System.out.println("saveas <file> - Saves the currently open file with a new name");
         System.out.println("list - Lists all grammars");
         System.out.println("print <id> - Prints a grammar");
+        System.out.println("save <id> <file> - Saves grammar to file");
         System.out.println("addRule <grammarId> <rule> - Adds a rule to a grammar");
         System.out.println("removeRule <grammarId> <ruleNumber> - Removes a rule from a grammar");
         System.out.println("union <id1> <id2> - Performs union of two grammars");

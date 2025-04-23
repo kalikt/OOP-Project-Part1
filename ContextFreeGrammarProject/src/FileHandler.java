@@ -101,4 +101,10 @@ public class FileHandler {
             }
         }
     }
+
+    public static void saveGrammarToFile(String filePath, Grammar grammar) throws IOException {
+        Map<String, Grammar> single = new HashMap<>();
+        single.put(grammar.getId(), grammar);
+        saveGrammarsToFile(filePath, single);
+    }
 }
