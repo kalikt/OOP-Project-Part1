@@ -1,8 +1,5 @@
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CommandManager {
     private GrammarManager manager;
@@ -11,6 +8,68 @@ public class CommandManager {
     public CommandManager(GrammarManager manager) {
         this.manager = manager;
     }
+
+    public void handleUnion(String[] args) {
+        if (args == null || args.length < 3) {
+            System.out.println("Usage: union <grammarId1> <grammarId2>");
+            return;
+        }
+        String id1 = args[1];
+        String id2 = args[2];
+        Grammar g1 = manager.getGrammar(id1);
+        Grammar g2 = manager.getGrammar(id2);
+        if (g1 == null) {
+            System.out.println("Grammar with ID " + id1 + " not found.");
+            return;
+        }
+        if (g2 == null) {
+            System.out.println("Grammar with ID " + id2 + " not found.");
+            return;
+        }
+
+        int maxNum = 0;
+        for (String existingId : manager.getGrammars().keySet()) {
+            if (existingId.startsWith("G")) {
+                int num = Integer.parseInt(existingId.substring(1));
+                if (num > maxNum) maxNum = num;
+            }
+        }
+        String newId = "G" + (maxNum + 1);
+
+        Set<Character> vars = new HashSet<>(g1.getVariables());
+        vars.addAll(g2.getVariables());
+        Set<Character> terms = new HashSet<>(g1.getTerminals());
+        terms.addAll(g2.getTerminals());
+
+        char newStart = 'S';
+        for (char c = 'A'; c <= 'Z'; c++) {
+            if (!vars.contains(c)) {
+                newStart = c;
+                break;
+            }
+        }
+
+        Grammar unionG = new Grammar(newId, newStart);
+        for (char v : vars)   unionG.addVariable(v);
+        for (char t : terms)  unionG.addTerminal(t);
+
+        int ruleNum = 1;
+        for (Rule r : g1.getAllRules()) {
+            String rid = "r" + ruleNum++;
+            unionG.addRule(rid, r.getLeftSide(), r.getRightSide());
+        }
+        for (Rule r : g2.getAllRules()) {
+            String rid = "r" + ruleNum++;
+            unionG.addRule(rid, r.getLeftSide(), r.getRightSide());
+        }
+
+        unionG.addRule("r" + ruleNum++, newStart, Character.toString(g1.getStartSymbol()));
+        unionG.addRule("r" + ruleNum++, newStart, Character.toString(g2.getStartSymbol()));
+
+        manager.addGrammar(unionG);
+        System.out.println("Created grammar " + newId);
+    }
+
 
     public void handleRemoveRule(String[] args) {
         if (args == null || args.length < 3) {
@@ -261,7 +320,7 @@ public class CommandManager {
         System.out.println("save <id> <file> - Saves grammar to file");
         System.out.println("addRule <grammarId> <rule> - Adds a rule to a grammar");
         System.out.println("removeRule <grammarId> <ruleNumber> - Removes a rule from a grammar");
-        System.out.println("union <id1> <id2> - Performs union of two grammars");
+        System.out.println("union <id1> <id2> - Performs union of two grammars and creates a new one");
         System.out.println("concat <id1> <id2> - Performs concatenation of two grammars");
         System.out.println("chomsky <id> - Checks if a grammar is in Chomsky normal form");
         System.out.println("cyk <id> - Checks if a word is in the language of a grammar (CYK algorithm)");
