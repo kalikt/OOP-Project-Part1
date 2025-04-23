@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class CLI {
     private GrammarManager manager;
     private CommandManager commandHandler;
-    private Map<String, Runnable> commandMap;
+    private Map<String, Command> commandMap;
     private Scanner scanner =  new Scanner(System.in);
 
     public CLI() {
@@ -16,45 +16,14 @@ public class CLI {
     }
 
     private void initializeCommands() {
-        commandMap.put("open", () -> {
-            System.out.print("Enter file path: ");
-            String filePath = scanner.nextLine().trim();
-            String[] args = {"open", filePath};
-            commandHandler.handleOpen(args);
-        });
-        commandMap.put("close", () -> {
-            commandHandler.handleClose(null);
-        });
-        commandMap.put("save", () -> {
-            commandHandler.handleSave(null);
-        });
-        commandMap.put("saveas", () -> {
-            System.out.print("Enter new file path: ");
-            String path = scanner.nextLine().trim();
-            String[] args = {"saveas", path};
-            commandHandler.handleSaveAs(args);
-        });
-        commandMap.put("list", () -> {
-            commandHandler.handleList(null);
-        });
-        commandMap.put("print", () -> {
-            System.out.print("Enter grammar ID to print: ");
-            String grammarId = scanner.nextLine().trim();
-            String[] args = {"print", grammarId};
-            commandHandler.handlePrint(args);
-        });
-        commandMap.put("addRule", () -> {
-            System.out.print("Enter rule in format <grammarId> <leftSide> -> <rightSide> (e.g., G1 A -> aB): ");
-            String input = scanner.nextLine().trim();
-            String[] args = input.split("\\s+");
-            commandHandler.handleAddRule(args);
-        });
-        commandMap.put("removeRule", () -> {
-            System.out.print("Enter command <grammarId> <ruleNumber> (e.g., G1 2): ");
-            String input = scanner.nextLine().trim();
-            String[] args = ("removeRule " + input).split("\\s+");
-            commandHandler.handleRemoveRule(args);
-        });
+        commandMap.put("open", commandHandler::handleOpen);
+        commandMap.put("close", commandHandler::handleClose);
+        commandMap.put("save", commandHandler::handleSave);
+        commandMap.put("saveas", commandHandler::handleSaveAs);
+        commandMap.put("list", commandHandler::handleList);
+        commandMap.put("print", commandHandler::handlePrint);
+        commandMap.put("addRule", commandHandler::handleAddRule);
+        commandMap.put("removeRule", commandHandler::handleRemoveRule);
         //commandMap.put("union", commandHandler::handleUnion);
         //commandMap.put("concat", commandHandler::handleConcat);
         //commandMap.put("chomsky", commandHandler::handleChomsky);
@@ -67,16 +36,17 @@ public class CLI {
     }
 
     public void start() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Type 'help' if you want to view all commands.");
+        System.out.println("Type 'help' to view all commands.");
         while (true) {
             System.out.print("-> ");
-            String input = scanner.nextLine();
-            String[] tokens = input.split(" ");
-            String command = tokens[0];
+            String line = scanner.nextLine().trim();
+            if (line.isEmpty()) continue;
 
-            if (commandMap.containsKey(command)) {
-                commandMap.get(command).run();
+            String[] tokens = line.split("\\s+");
+            String cmd = tokens[0];
+
+            if (commandMap.containsKey(cmd)) {
+                commandMap.get(cmd).execute(tokens);
             } else {
                 System.out.println("Invalid command. Type 'help' to view all commands.");
             }

@@ -49,15 +49,15 @@ public class CommandManager {
     }
 
     public void handleAddRule(String[] args) {
-        if (args.length < 4) {
+        if (args == null || args.length < 4) {
             System.out.println("Usage: addRule <grammarId> <leftSide> -> <rightSide>");
             return;
         }
 
-        String grammarId = args[0];
+        String grammarId = args[1];
 
         StringBuilder sb = new StringBuilder();
-        for (int i = 1; i < args.length; i++) {
+        for (int i = 2; i < args.length; i++) {
             sb.append(args[i]).append(" ");
         }
         String ruleDefinition = sb.toString().trim();
@@ -71,12 +71,8 @@ public class CommandManager {
         String leftPart = parts[0].trim();
         String rightPart = parts[1].trim();
 
-        if (leftPart.isEmpty()) {
-            System.out.println("Invalid rule format. Left side is empty.");
-            return;
-        }
-        if (rightPart.isEmpty()) {
-            System.out.println("Invalid rule format. Right side is empty.");
+        if (leftPart.isEmpty() || rightPart.isEmpty()) {
+            System.out.println("Invalid rule format. Left or right side is empty.");
             return;
         }
 
@@ -223,7 +219,7 @@ public class CommandManager {
         }
     }
 
-    public void handleHelp() {
+    public void handleHelp(String[] args) {
         System.out.println("The following commands are supported:");
         System.out.println("open <file> - Opens a file");
         System.out.println("close - Closes the currently opened file");
@@ -231,8 +227,8 @@ public class CommandManager {
         System.out.println("saveas <file> - Saves the currently open file with a new name");
         System.out.println("list - Lists all grammars");
         System.out.println("print <id> - Prints a grammar");
-        System.out.println("addRule <id> <rule> - Adds a rule to a grammar");
-        System.out.println("removeRule <id> <n> - Removes a rule from a grammar");
+        System.out.println("addRule <grammarId> <rule> - Adds a rule to a grammar");
+        System.out.println("removeRule <grammarId> <ruleNumber> - Removes a rule from a grammar");
         System.out.println("union <id1> <id2> - Performs union of two grammars");
         System.out.println("concat <id1> <id2> - Performs concatenation of two grammars");
         System.out.println("chomsky <id> - Checks if a grammar is in Chomsky normal form");
@@ -244,7 +240,7 @@ public class CommandManager {
         System.out.println("exit - Exits the program");
     }
 
-    public void handleExit() {
+    public void handleExit(String[] args) {
         System.out.println("Exiting program...");
         System.exit(0);
     }
