@@ -25,7 +25,7 @@ public class CLI {
         commandMap.put("addRule", commandHandler::handleAddRule);
         commandMap.put("removeRule", commandHandler::handleRemoveRule);
         commandMap.put("union", commandHandler::handleUnion);
-        //commandMap.put("concat", commandHandler::handleConcat);
+        commandMap.put("concat", commandHandler::handleConcat);
         //commandMap.put("chomsky", commandHandler::handleChomsky);
         //commandMap.put("cyk", commandHandler::handleCyk);
         //commandMap.put("iter", commandHandler::handleIter);
