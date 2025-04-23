@@ -65,4 +65,11 @@ public class Grammar {
         }
         rules.put(ruleId, new Rule(ruleId, leftSide, rightSide));
     }
+
+    public void removeRule(String ruleId) {
+        if (!rules.containsKey(ruleId)) {
+            throw new IllegalArgumentException("Rule with ID " + ruleId + " not found");
+        }
+        rules.remove(ruleId);
+    }
 }

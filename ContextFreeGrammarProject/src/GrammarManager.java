@@ -20,6 +20,14 @@ public class GrammarManager {
         grammar.addRule(ruleId, leftSide, rightSide);
     }
 
+    public void removeRule(String grammarId, String ruleId) {
+        Grammar grammar = grammars.get(grammarId);
+        if (grammar == null) {
+            throw new IllegalArgumentException("Grammar with ID " + grammarId + " not found");
+        }
+        grammar.removeRule(ruleId);
+    }
+
     public boolean isEmpty() {
         return grammars.isEmpty();
     }

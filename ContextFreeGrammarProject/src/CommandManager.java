@@ -12,6 +12,42 @@ public class CommandManager {
         this.manager = manager;
     }
 
+    public void handleRemoveRule(String[] args) {
+        if (args == null || args.length < 3) {
+            System.out.println("Usage: removeRule <grammarId> <ruleNumber>");
+            return;
+        }
+        String grammarId = args[1];
+        int index;
+        try {
+            index = Integer.parseInt(args[2]);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid rule number: " + args[2]);
+            return;
+        }
+        Grammar grammar = manager.getGrammar(grammarId);
+        if (grammar == null) {
+            System.out.println("Grammar with ID " + grammarId + " not found.");
+            return;
+        }
+
+        List<Rule> rules = new ArrayList<>(grammar.getAllRules());
+        rules.sort(Comparator.comparingInt(r -> Integer.parseInt(r.getId().substring(1))));
+
+        if (index < 1 || index > rules.size()) {
+            System.out.println("Rule number out of range. There are " + rules.size() + " rule(s).");
+            return;
+        }
+
+        String ruleId = rules.get(index - 1).getId();
+        try {
+            manager.removeRule(grammarId, ruleId);
+            System.out.println("Removed rule " + ruleId + " from grammar " + grammarId);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
     public void handleAddRule(String[] args) {
         if (args.length < 4) {
             System.out.println("Usage: addRule <grammarId> <leftSide> -> <rightSide>");
@@ -98,6 +134,18 @@ public class CommandManager {
         for (Rule rule : rules) {
             System.out.println(index + ". " + rule);
             index++;
+        }
+    }
+
+    public void handleList(String[] args) {
+        Map<String, Grammar> all = manager.getGrammars();
+        if (all.isEmpty()) {
+            System.out.println("No grammars loaded.");
+            return;
+        }
+        System.out.println("Loaded grammars:");
+        for (String id : all.keySet()) {
+            System.out.println("- " + id);
         }
     }
 

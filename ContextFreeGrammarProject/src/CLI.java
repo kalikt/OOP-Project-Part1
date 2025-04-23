@@ -34,7 +34,9 @@ public class CLI {
             String[] args = {"saveas", path};
             commandHandler.handleSaveAs(args);
         });
-        //commandMap.put("list", commandHandler::handleList);
+        commandMap.put("list", () -> {
+            commandHandler.handleList(null);
+        });
         commandMap.put("print", () -> {
             System.out.print("Enter grammar ID to print: ");
             String grammarId = scanner.nextLine().trim();
@@ -47,7 +49,12 @@ public class CLI {
             String[] args = input.split("\\s+");
             commandHandler.handleAddRule(args);
         });
-        //commandMap.put("removeRule", commandHandler::handleRemoveRule);
+        commandMap.put("removeRule", () -> {
+            System.out.print("Enter command <grammarId> <ruleNumber> (e.g., G1 2): ");
+            String input = scanner.nextLine().trim();
+            String[] args = ("removeRule " + input).split("\\s+");
+            commandHandler.handleRemoveRule(args);
+        });
         //commandMap.put("union", commandHandler::handleUnion);
         //commandMap.put("concat", commandHandler::handleConcat);
         //commandMap.put("chomsky", commandHandler::handleChomsky);
