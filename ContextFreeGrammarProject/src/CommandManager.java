@@ -9,6 +9,142 @@ public class CommandManager {
         this.manager = manager;
     }
 
+    public void handleChomskify(String[] args) {
+        if (args == null || args.length < 2) {
+            System.out.println("Usage: chomskify <grammarId>");
+            return;
+        }
+        String oldId = args[1];
+        Grammar g = manager.getGrammar(oldId);
+        if (g == null) {
+            System.out.println("Grammar with ID " + oldId + " not found.");
+            return;
+        }
+
+        if (isCNF(g)) {
+            System.out.println("Grammar " + oldId + " is already in Chomsky Normal Form.");
+            return;
+        }
+
+        int maxNum = 0;
+        for (String id : manager.getGrammars().keySet()) {
+            if (id.startsWith("G")) {
+                try {
+                    maxNum = Math.max(maxNum, Integer.parseInt(id.substring(1)));
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+        String newId = "G" + (maxNum + 1);
+
+        Grammar cnf = new Grammar(newId, g.getStartSymbol());
+
+        for (char V : g.getVariables()) cnf.addVariable(V);
+        for (char t : g.getTerminals())   cnf.addTerminal(t);
+
+        Map<Character,Character> termToVar = new HashMap<>();
+        List<Character> freeVars = new ArrayList<>();
+        for (char c = 'A'; c <= 'Z'; c++) {
+            if (!cnf.getVariables().contains(c)) freeVars.add(c);
+        }
+        Iterator<Character> freeIt = freeVars.iterator();
+        int ruleNum = 1;
+
+        for (char t : g.getTerminals()) {
+            if (!termToVar.containsKey(t) && freeIt.hasNext()) {
+                char X = freeIt.next();
+                termToVar.put(t, X);
+                cnf.addVariable(X);
+                cnf.addRule("r" + (ruleNum++), X, "" + t);
+            }
+        }
+
+        for (Rule r : g.getAllRules()) {
+            char A = r.getLeftSide();
+            String rhs = r.getRightSide();
+
+            List<String> syms = new ArrayList<>();
+            for (char c : rhs.toCharArray()) {
+                if (g.getTerminals().contains(c) && rhs.length() > 1) {
+                    syms.add(termToVar.get(c).toString());
+                } else {
+                    syms.add(String.valueOf(c));
+                }
+            }
+
+            if (syms.size() == 1) {
+                cnf.addRule("r" + (ruleNum++), A, syms.get(0));
+            }
+            else if (syms.size() == 2) {
+                cnf.addRule("r" + (ruleNum++), A, syms.get(0) + syms.get(1));
+            }
+            else {
+                String X1 = syms.get(0);
+                String Y1 = freeIt.hasNext() ? freeIt.next().toString() : null;
+                if (Y1 == null) {
+                    System.out.println("Out of variable names during chomskify");
+                    return;
+                }
+                cnf.addVariable(Y1.charAt(0));
+                cnf.addRule("r" + (ruleNum++), A, X1 + Y1);
+
+                for (int i = 1; i < syms.size() - 2; i++) {
+                    String Xi = syms.get(i);
+                    String Yi = freeIt.hasNext() ? freeIt.next().toString() : null;
+                    if (Yi == null) {
+                        System.out.println("Out of variable names during chomskify");
+                        return;
+                    }
+                    cnf.addVariable(Yi.charAt(0));
+                    cnf.addRule("r" + (ruleNum++), Y1.charAt(0), Xi + Yi);
+                    Y1 = Yi;
+                }
+                String penult = syms.get(syms.size() - 2);
+                String last   = syms.get(syms.size() - 1);
+                cnf.addRule("r" + (ruleNum++), Y1.charAt(0), penult + last);
+            }
+        }
+
+        manager.addGrammar(cnf);
+        System.out.println("Created grammar " + newId);
+    }
+
+
+    public void handleChomsky(String[] args) {
+        if (args == null || args.length < 2) {
+            System.out.println("Usage: chomsky <grammarId>");
+            return;
+        }
+        Grammar g = manager.getGrammar(args[1]);
+        if (g == null) {
+            System.out.println("Grammar " + args[1] + " not found.");
+            return;
+        }
+        if (isCNF(g)) {
+            System.out.println("Grammar " + g.getId() + " is in Chomsky Normal Form.");
+        } else {
+            System.out.println("Grammar " + g.getId() + " is NOT in Chomsky Normal Form.");
+        }
+    }
+
+    private boolean isCNF(Grammar g) {
+        for (Rule r : g.getAllRules()) {
+            String rhs = r.getRightSide();
+            if (rhs.length() == 1) {
+                // A -> a
+                char c = rhs.charAt(0);
+                if (!g.getTerminals().contains(c)) return false;
+            } else if (rhs.length() == 2) {
+                // A -> BC
+                char c0 = rhs.charAt(0), c1 = rhs.charAt(1);
+                if (!g.getVariables().contains(c0) || !g.getVariables().contains(c1))
+                    return false;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void handleConcat(String[] args) {
         if (args == null || args.length < 3) {
             System.out.println("Usage: concat <grammarId1> <grammarId2>");
