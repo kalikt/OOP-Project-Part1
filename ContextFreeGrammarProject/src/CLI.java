@@ -27,7 +27,7 @@ public class CLI {
         commandMap.put("union", commandHandler::handleUnion);
         commandMap.put("concat", commandHandler::handleConcat);
         commandMap.put("chomsky", commandHandler::handleChomsky);
-        //commandMap.put("cyk", commandHandler::handleCyk);
+        commandMap.put("cyk", commandHandler::handleCyk);
         //commandMap.put("iter", commandHandler::handleIter);
         //commandMap.put("empty", commandHandler::handleEmpty);
         commandMap.put("chomskify", commandHandler::handleChomskify);
