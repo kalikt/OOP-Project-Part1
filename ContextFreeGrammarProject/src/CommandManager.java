@@ -9,6 +9,54 @@ public class CommandManager {
         this.manager = manager;
     }
 
+    public void handleEmpty(String[] args) {
+        if (args == null || args.length < 2) {
+            System.out.println("Usage: empty <grammarId>");
+            return;
+        }
+        String grammarId = args[1];
+
+        Grammar grammar = manager.getGrammar(grammarId);
+        if (grammar == null) {
+            System.out.println("Grammar with ID " + grammarId + " not found.");
+            return;
+        }
+
+        Set<Character> productive = new HashSet<>();
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (Rule r : grammar.getAllRules()) {
+                char leftSide = r.getLeftSide();
+                String rightSide = r.getRightSide();
+                boolean allGood = true;
+                for (char c : rightSide.toCharArray()) {
+                    if (grammar.getVariables().contains(c)) {
+                        if (!productive.contains(c)) {
+                            allGood = false;
+                            break;
+                        }
+                    } else if (!grammar.getTerminals().contains(c)) {
+                        allGood = false;
+                        break;
+                    }
+                }
+                if (allGood && !productive.contains(leftSide)) {
+                    productive.add(leftSide);
+                    changed = true;
+                }
+            }
+        }
+
+        char startSymbol = grammar.getStartSymbol();
+        if (productive.contains(startSymbol)) {
+            System.out.println("Grammar " + grammarId + " is NOT empty.");
+        } else {
+            System.out.println("Grammar " + grammarId + " is empty.");
+        }
+    }
+
+
     public void handleCyk(String[] args) {
         if (args == null || args.length < 3) {
             System.out.println("Usage: cyk <grammarId> <word>");
@@ -51,13 +99,13 @@ public class CommandManager {
             return;
         }
         String oldId = args[1];
-        Grammar g = manager.getGrammar(oldId);
-        if (g == null) {
+        Grammar grammar = manager.getGrammar(oldId);
+        if (grammar == null) {
             System.out.println("Grammar with ID " + oldId + " not found.");
             return;
         }
 
-        if (isCNF(g)) {
+        if (isCNF(grammar)) {
             System.out.println("Grammar " + oldId + " is already in Chomsky Normal Form.");
             return;
         }
@@ -72,20 +120,26 @@ public class CommandManager {
         }
         String newId = "G" + (maxNum + 1);
 
-        Grammar cnf = new Grammar(newId, g.getStartSymbol());
+        Grammar cnf = new Grammar(newId, grammar.getStartSymbol());
 
-        for (char V : g.getVariables()) cnf.addVariable(V);
-        for (char t : g.getTerminals())   cnf.addTerminal(t);
+        for (char V : grammar.getVariables()) {
+            cnf.addVariable(V);
+        }
+        for (char t : grammar.getTerminals()) {
+            cnf.addTerminal(t);
+        }
 
         Map<Character,Character> termToVar = new HashMap<>();
         List<Character> freeVars = new ArrayList<>();
         for (char c = 'A'; c <= 'Z'; c++) {
-            if (!cnf.getVariables().contains(c)) freeVars.add(c);
+            if (!cnf.getVariables().contains(c)){
+                freeVars.add(c);
+            }
         }
         Iterator<Character> freeIt = freeVars.iterator();
         int ruleNum = 1;
 
-        for (char t : g.getTerminals()) {
+        for (char t : grammar.getTerminals()) {
             if (!termToVar.containsKey(t) && freeIt.hasNext()) {
                 char X = freeIt.next();
                 termToVar.put(t, X);
@@ -94,13 +148,13 @@ public class CommandManager {
             }
         }
 
-        for (Rule r : g.getAllRules()) {
+        for (Rule r : grammar.getAllRules()) {
             char A = r.getLeftSide();
             String rhs = r.getRightSide();
 
             List<String> syms = new ArrayList<>();
             for (char c : rhs.toCharArray()) {
-                if (g.getTerminals().contains(c) && rhs.length() > 1) {
+                if (grammar.getTerminals().contains(c) && rhs.length() > 1) {
                     syms.add(termToVar.get(c).toString());
                 } else {
                     syms.add(String.valueOf(c));
@@ -150,28 +204,30 @@ public class CommandManager {
             System.out.println("Usage: chomsky <grammarId>");
             return;
         }
-        Grammar g = manager.getGrammar(args[1]);
-        if (g == null) {
+        Grammar grammar = manager.getGrammar(args[1]);
+        if (grammar == null) {
             System.out.println("Grammar " + args[1] + " not found.");
             return;
         }
-        if (isCNF(g)) {
-            System.out.println("Grammar " + g.getId() + " is in Chomsky Normal Form.");
+        if (isCNF(grammar)) {
+            System.out.println("Grammar " + grammar.getId() + " is in Chomsky Normal Form.");
         } else {
-            System.out.println("Grammar " + g.getId() + " is NOT in Chomsky Normal Form.");
+            System.out.println("Grammar " + grammar.getId() + " is NOT in Chomsky Normal Form.");
         }
     }
 
     private boolean isCNF(Grammar g) {
         for (Rule r : g.getAllRules()) {
-            String rhs = r.getRightSide();
-            if (rhs.length() == 1) {
+            String rightSide = r.getRightSide();
+            if (rightSide.length() == 1) {
                 // A -> a
-                char c = rhs.charAt(0);
-                if (!g.getTerminals().contains(c)) return false;
-            } else if (rhs.length() == 2) {
+                char c = rightSide.charAt(0);
+                if (!g.getTerminals().contains(c))
+                    return false;
+            } else if (rightSide.length() == 2) {
                 // A -> BC
-                char c0 = rhs.charAt(0), c1 = rhs.charAt(1);
+                char c0 = rightSide.charAt(0);
+                char c1 = rightSide.charAt(1);
                 if (!g.getVariables().contains(c0) || !g.getVariables().contains(c1))
                     return false;
             } else {
@@ -223,23 +279,27 @@ public class CommandManager {
             }
         }
 
-        Grammar cat = new Grammar(newId, newStart);
-        for (char v : vars)   cat.addVariable(v);
-        for (char t : terms)  cat.addTerminal(t);
+        Grammar concatG = new Grammar(newId, newStart);
+        for (char v : vars) {
+            concatG.addVariable(v);
+        }
+        for (char t : terms) {
+            concatG.addTerminal(t);
+        }
 
         int ruleNum = 1;
         for (Rule r : g1.getAllRules()) {
-            cat.addRule("r" + ruleNum++, r.getLeftSide(), r.getRightSide());
+            concatG.addRule("r" + ruleNum++, r.getLeftSide(), r.getRightSide());
         }
         for (Rule r : g2.getAllRules()) {
-            cat.addRule("r" + ruleNum++, r.getLeftSide(), r.getRightSide());
+            concatG.addRule("r" + ruleNum++, r.getLeftSide(), r.getRightSide());
         }
 
         char s1 = g1.getStartSymbol();
         char s2 = g2.getStartSymbol();
-        cat.addRule("r" + ruleNum++, newStart, "" + s1 + s2);
+        concatG.addRule("r" + ruleNum++, newStart, "" + s1 + s2);
 
-        manager.addGrammar(cat);
+        manager.addGrammar(concatG);
         System.out.println("Created grammar " + newId);
     }
 
@@ -427,13 +487,13 @@ public class CommandManager {
     }
 
     public void handleList(String[] args) {
-        Map<String, Grammar> all = manager.getGrammars();
-        if (all.isEmpty()) {
+        Map<String, Grammar> grammars = manager.getGrammars();
+        if (grammars.isEmpty()) {
             System.out.println("No grammars loaded.");
             return;
         }
         System.out.println("Loaded grammars:");
-        for (String id : all.keySet()) {
+        for (String id : grammars.keySet()) {
             System.out.println("- " + id);
         }
     }
