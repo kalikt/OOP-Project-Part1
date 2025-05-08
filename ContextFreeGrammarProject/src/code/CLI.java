@@ -1,7 +1,7 @@
 package code;
 
 import code.commands.*;
-
+import code.enums.CommandName;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -18,23 +18,23 @@ public class CLI {
     }
 
     private void initializeCommands() {
-        commandMap.put("open", new OpenCommand(manager));
-        commandMap.put("close", new CloseCommand(manager));
-        commandMap.put("save", new SaveCommand(manager));
-        commandMap.put("saveas", new SaveAsCommand(manager));
-        commandMap.put("list", new ListCommand(manager));
-        commandMap.put("print", new PrintCommand(manager));
-        commandMap.put("addRule", new AddRuleCommand(manager));
-        commandMap.put("removeRule", new RemoveRuleCommand(manager));
-        commandMap.put("union", new UnionCommand(manager));
-        commandMap.put("concat", new ConcatCommand(manager));
-        commandMap.put("chomsky", new ChomskyCommand(manager));
-        commandMap.put("cyk", new CykCommand(manager));
-        commandMap.put("iter", new IterCommand(manager));
-        commandMap.put("empty", new EmptyCommand(manager));
-        commandMap.put("chomskify", new ChomskifyCommand(manager));
-        commandMap.put("help", new HelpCommand());
-        commandMap.put("exit", new ExitCommand());
+        commandMap.put(CommandName.OPEN.getCommand(), new OpenCommand(manager));
+        commandMap.put(CommandName.CLOSE.getCommand(), new CloseCommand(manager));
+        commandMap.put(CommandName.SAVE.getCommand(), new SaveCommand(manager));
+        commandMap.put(CommandName.SAVE_AS.getCommand(), new SaveAsCommand(manager));
+        commandMap.put(CommandName.LIST.getCommand(), new ListCommand(manager));
+        commandMap.put(CommandName.PRINT.getCommand(), new PrintCommand(manager));
+        commandMap.put(CommandName.ADD_RULE.getCommand(), new AddRuleCommand(manager));
+        commandMap.put(CommandName.REMOVE_RULE.getCommand(), new RemoveRuleCommand(manager));
+        commandMap.put(CommandName.UNION.getCommand(), new UnionCommand(manager));
+        commandMap.put(CommandName.CONCAT.getCommand(), new ConcatCommand(manager));
+        commandMap.put(CommandName.CHOMSKY.getCommand(), new ChomskyCommand(manager));
+        commandMap.put(CommandName.CYK.getCommand(), new CykCommand(manager));
+        commandMap.put(CommandName.ITER.getCommand(), new IterCommand(manager));
+        commandMap.put(CommandName.EMPTY.getCommand(), new EmptyCommand(manager));
+        commandMap.put(CommandName.CHOMSKIFY.getCommand(), new ChomskifyCommand(manager));
+        commandMap.put(CommandName.HELP.getCommand(), new HelpCommand());
+        commandMap.put(CommandName.EXIT.getCommand(), new ExitCommand());
     }
 
     public void start() {
