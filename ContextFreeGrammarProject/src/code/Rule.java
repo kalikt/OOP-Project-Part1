@@ -1,3 +1,5 @@
+package code;
+
 public class Rule {
     private String id;
     private char leftSide;
