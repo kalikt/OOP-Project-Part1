@@ -1,5 +1,9 @@
 package code.enums;
 
+/**
+ * Enumeration of all supported commands, each mapping to
+ * the string used to invoke the corresponding command.
+ */
 public enum CommandName {
     OPEN("open"),
     CLOSE("close"),
@@ -21,6 +25,11 @@ public enum CommandName {
 
     private String command;
 
+    /**
+     * Constructs a CommandName enum constant.
+     *
+     * @param command the string used to invoke this command in the CLI
+     */
     CommandName(String command) {
         this.command = command;
     }

@@ -8,6 +8,11 @@ import code.extensions.IsCNF;
 
 import java.util.*;
 
+/**
+ * Command that applies the CYK (Cocke–Younger–Kasami) algorithm
+ * to determine whether a given word belongs to the language of a grammar
+ * in Chomsky Normal Form (CNF).
+ */
 public class CykCommand implements Command {
     private GrammarManager manager;
 
@@ -15,6 +20,28 @@ public class CykCommand implements Command {
         this.manager = manager;
     }
 
+    /**
+     * Executes the CYK algorithm.
+     * <p>
+     * Steps:
+     * <ol>
+     *   <li>Validate arguments: expects exactly two parameters (grammarId and word).</li>
+     *   <li>Lookup the grammar and verify it is in CNF.</li>
+     *   <li>Build a table for substrings of increasing length:
+     *     <ul>
+     *       <li>Length 1: fill with variables that produce each terminal.</li>
+     *       <li>Length &gt;1: for each span (i…j) and split k, combine T[i][k] and T[k+1][j]
+     *           according to rules A→BC.</li>
+     *     </ul>
+     *   </li>
+     *   <li>Check if the start symbol appears in T[0][n−1]; print acceptance or rejection.</li>
+     * </ol>
+     * </p>
+     *
+     * @param args the command tokens where args[0] is "cyk",
+     *      *                 args[1] is the ID of the grammar and
+     *      *                 args[2] is the word.
+     */
     @Override
     public void execute(String[] args) {
         if (args == null || args.length < 3) {

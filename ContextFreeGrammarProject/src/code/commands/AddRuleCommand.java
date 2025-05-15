@@ -4,6 +4,9 @@ import code.Command;
 import code.Grammar;
 import code.GrammarManager;
 
+/**
+ * Command that adds a new production rule to a specified grammar.
+ */
 public class AddRuleCommand implements Command {
     private GrammarManager manager;
 
@@ -11,6 +14,19 @@ public class AddRuleCommand implements Command {
         this.manager = manager;
     }
 
+    /**
+     * Parses the provided arguments and attempts to add a new rule to the specified grammar.
+     * <ul>
+     *   <li>If fewer than 4 arguments are provided, prints usage instructions.</li>
+     *   <li>Splits the rule definition on "->" to obtain left and right sides.</li>
+     *   <li>Validates that the target grammar exists; if not, prints an error.</li>
+     *   <li>Generates a rule ID ("rN") based on existing rules and adds the rule.</li>
+     *   <li>On success, prints confirmation; on failure, prints the exception message.</li>
+     * </ul>
+     *
+     * @param args the command tokens, where
+     *             args[1] is the grammar ID and the remainder form "<leftSide> -> <rightSide>"
+     */
     @Override
     public void execute(String[] args) {
         if (args == null || args.length < 4) {

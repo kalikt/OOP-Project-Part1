@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Command that removes a production rule from a specified grammar by its index.
+ */
 public class RemoveRuleCommand implements Command {
     private GrammarManager manager;
 
@@ -16,6 +19,18 @@ public class RemoveRuleCommand implements Command {
         this.manager = manager;
     }
 
+    /**
+     * Parses the provided arguments and attempts to remove the specified rule from the grammar.
+     * <ul>
+     *   <li>If fewer than 3 arguments are provided, prints usage instructions.</li>
+     *   <li>Parses the rule number as a 1-based index into the sorted rule list.</li>
+     *   <li>Validates that the target grammar exists; if not, prints an error.</li>
+     *   <li>On success, removes the rule and prints confirmation; on failure, prints an error.</li>
+     * </ul>
+     *
+     * @param args the command tokens, where
+     *             args[1] is the grammar ID and args[2] is the rule number
+     */
     @Override
     public void execute(String[] args) {
         if (args == null || args.length < 3) {

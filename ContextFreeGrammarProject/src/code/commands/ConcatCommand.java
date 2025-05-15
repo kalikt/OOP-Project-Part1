@@ -8,6 +8,9 @@ import code.Rule;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Command that creates a new grammar representing the concatenation of two existing grammars.
+ */
 public class ConcatCommand implements Command {
     private GrammarManager manager;
 
@@ -15,6 +18,24 @@ public class ConcatCommand implements Command {
         this.manager = manager;
     }
 
+    /**
+     * Executes the "concat" command.
+     The command:
+     * <ol>
+     *   <li>Validates both grammars exist.</li>
+     *   <li>Generates a new grammar ID.</li>
+     *   <li>Merges the variable and terminal sets of both grammars.</li>
+     *   <li>Selects a new start symbol which is not already used.</li>
+     *   <li>Copies all rules from the first grammar, then the second.</li>
+     *   <li>Adds a final rule linking the new start symbol to the two original start symbols:
+     *       <code>S' → S₁ S₂</code>.</li>
+     *   <li>Registers the new grammar with the manager and prints its ID.</li>
+     * </ol>
+     *
+     * @param args the command tokens where args[0] is "concat",
+     *                 args[1] is the ID of the first grammar and
+     *                 args[2] is the ID of the second grammar.
+     */
     @Override
     public void execute(String[] args) {
         if (args == null || args.length < 3) {

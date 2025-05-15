@@ -7,6 +7,9 @@ import code.GrammarManager;
 
 import java.io.IOException;
 
+/**
+ * Command that saves grammars to files.
+ */
 public class SaveCommand implements Command {
     private GrammarManager manager;
 
@@ -14,6 +17,25 @@ public class SaveCommand implements Command {
         this.manager = manager;
     }
 
+    /**
+     * Executes the "save" command.
+     * <p>
+     * Supports two modes of operation:
+     * <ul>
+     *      <li>{@code save} – saves all grammars to the current file path stored in the manager.</li>
+     *      <li>{@code save <grammarId> <file>} – saves the specified grammar to the given file path.</li>
+     * </ul>
+     * If no file is open and no file path is provided, prints an error.
+     * On success, prints a confirmation message; on I/O failure, prints the exception message.
+     * </p>
+     *
+     * @param args the command tokens are:
+     *             <ul>
+     *               <li>{@code args[0]} = "save"</li>
+     *               <li>Optional: {@code args[1]} = grammar ID</li>
+     *               <li>Optional: {@code args[2]…args[n]} = file path segments</li>
+     *             </ul>
+     */
     @Override
     public void execute(String[] args) {
         String currentFilePath = manager.getCurrentFilePath();

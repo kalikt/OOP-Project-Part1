@@ -8,6 +8,11 @@ import code.Rule;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Command that constructs the Kleene star (iteration) of an existing grammar,
+ * producing a new grammar whose language is the zero-or-more concatenations
+ * of strings from the original grammar.
+ */
 public class IterCommand implements Command {
     private GrammarManager manager;
 
@@ -15,6 +20,29 @@ public class IterCommand implements Command {
         this.manager = manager;
     }
 
+    /**
+     * Executes the "iter" command.
+     <p>
+     * The command:
+     * <ol>
+     *   <li>Generates new grammar ID.</li>
+     *   <li>Creates a new start symbol S' not used by the original grammar.</li>
+     *   <li>Copies all original variables and terminals into the new grammar,
+     *       adding S' and the empty string symbol 'ε'.</li>
+     *   <li>Copies all production rules from the original grammar.</li>
+     *   <li>Adds rules:
+     *       <ul>
+     *         <li>S' → ε</li>
+     *         <li>S' → S S'</li>
+     *       </ul>
+     *       to allow zero or more repetitions of the original start symbol.</li>
+     *   <li>Registers the new grammar with the manager and prints its new ID.</li>
+     * </ol>
+     * </p>
+     *
+     * @param args the command tokens, where args[0] is "iter" and
+     *                 args[1] is the ID of the grammar
+     */
     @Override
     public void execute(String[] args) {
         if (args == null || args.length < 2) {

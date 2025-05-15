@@ -8,6 +8,9 @@ import code.Rule;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Command that creates a new grammar representing the union of two existing grammars.
+ */
 public class UnionCommand implements Command {
     private GrammarManager manager;
 
@@ -15,6 +18,26 @@ public class UnionCommand implements Command {
         this.manager = manager;
     }
 
+    /**
+     * Executes the "union" command.
+     * <p>
+     * The command:
+     * <ol>
+     *   <li>Validates both grammars exist.</li>
+     *   <li>Generates a new grammar ID.</li>
+     *   <li>Merges the variable and terminal sets of both grammars.</li>
+     *   <li>Selects a new start symbol which is not already used.</li>
+     *   <li>Copies all rules from the first grammar, then the second.</li>
+     *   <li>Adds two rules linking the new start symbol to each original start symbol:
+     *       <code>S' → S₁</code> and <code>S' → S₂</code>.</li>
+     *   <li>Registers the new grammar with the manager and prints its ID.</li>
+     * </ol>
+     * </p>
+     *
+     * @param args the command tokens where args[0] is "union",
+     *                 args[1] is the ID of the first grammar and
+     *                 args[2] is the ID of the second grammar.
+     */
     @Override
     public void execute(String[] args) {
         if (args == null || args.length < 3) {

@@ -2,6 +2,9 @@ package code.commands;
 
 import code.Command;
 
+/**
+ * Command that displays a list of all supported commands and their usage.
+ */
 public class HelpCommand implements Command {
     @Override
     public void execute(String[] args) {

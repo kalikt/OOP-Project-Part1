@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Command that displays the full details of a specified grammar.
+ */
 public class PrintCommand implements Command {
     private GrammarManager manager;
 
@@ -16,6 +19,24 @@ public class PrintCommand implements Command {
         this.manager = manager;
     }
 
+    /**
+     * Executes the "print" command.
+     * <p>
+     * Parses {@code args} to obtain the grammar ID ( {@code args[1]} ).
+     * If the grammar does not exist, prints an error message.
+     * Otherwise, prints the grammar’s:
+     * <ul>
+     *   <li>ID</li>
+     *   <li>Start symbol</li>
+     *   <li>Variables</li>
+     *   <li>Terminals</li>
+     *   <li>Rules</li>
+     * </ul>
+     * </p>
+     *
+     * @param args the command tokens, where args[0] is "print" and
+     *              args[1] is the id of the grammar.
+     */
     @Override
     public void execute(String[] args) {
         if (args.length < 2) {

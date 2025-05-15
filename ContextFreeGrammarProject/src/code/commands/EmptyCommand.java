@@ -8,6 +8,10 @@ import code.Rule;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Command that determines whether a given grammar’s language is empty
+ * (i.e., the grammar cannot derive any terminal string).
+ */
 public class EmptyCommand implements Command {
     private GrammarManager manager;
 
@@ -15,6 +19,19 @@ public class EmptyCommand implements Command {
         this.manager = manager;
     }
 
+    /**
+     * Executes the "empty" command.
+     * <p>
+     * The algorithm computes the set of “productive” variables:
+     * it repeatedly adds any variable A for which there exists a rule A→α
+     * where every symbol in α is either a terminal or a productive variable.
+     * Once no more variables can be added, the grammar is empty if and only if
+     * the start symbol is not in the productive set.
+     * </p>
+     *
+     * @param args the command tokens, where args[0] is "empty" and
+     *      *          args[1] is the ID of the grammar
+     */
     @Override
     public void execute(String[] args) {
         if (args == null || args.length < 2) {

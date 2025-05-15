@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * Command line interface for interacting with the {@link GrammarManager}.
+ * Initializes available commands and processes user input in a loop until the user exits the program.
+ */
 public class CLI {
     private GrammarManager manager;
     private Map<String, Command> commandMap;
@@ -17,6 +21,10 @@ public class CLI {
         initializeCommands();
     }
 
+    /**
+     * Maps command names (from {@link CommandName})
+     * to their {@link Command} implementations.
+     */
     private void initializeCommands() {
         commandMap.put(CommandName.OPEN.getCommand(), new OpenCommand(manager));
         commandMap.put(CommandName.CLOSE.getCommand(), new CloseCommand(manager));
@@ -37,6 +45,11 @@ public class CLI {
         commandMap.put(CommandName.EXIT.getCommand(), new ExitCommand());
     }
 
+    /**
+     * Starts the command loop.
+     * Displays a prompt, reads user input, and executes the appropriate command.
+     * Continues until the {@code exit} command is executed.
+     */
     public void start() {
         System.out.println("Type 'help' to view all commands.");
         while (true) {

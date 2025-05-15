@@ -6,6 +6,9 @@ import code.GrammarManager;
 
 import java.util.Map;
 
+/**
+ * Command that lists all grammars currently loaded in the manager.
+ */
 public class ListCommand implements Command {
     private GrammarManager manager;
 
@@ -13,6 +16,15 @@ public class ListCommand implements Command {
         this.manager = manager;
     }
 
+    /**
+     * Executes the "list" command.
+     * <p>
+     * Retrieves the map of grammars from the manager and prints each grammar ID.
+     * If no grammars are loaded, prints "No grammars loaded."
+     * </p>
+     *
+     * @param args the command arguments (none)
+     */
     @Override
     public void execute(String[] args) {
         Map<String, Grammar> grammars = manager.getGrammars();

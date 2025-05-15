@@ -3,9 +3,25 @@ package code;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Class for loading and saving {@link Grammar} instances to and from a text file.
+ * Grammars are separated by a delimiter line ("====") and include definitions for
+ * ID, start symbol, variables, terminals, and rules.
+ */
+
 public class FileHandler {
     private static final String GRAMMAR_SEPARATOR = "====";
 
+    /**
+     * Reads grammars from the specified file. If the file does not exist, it is created
+     * and an empty map is returned. Each grammar block in the file must begin with the
+     * separator line ("===="), followed by lines for Grammar ID, Start Symbol, Variables,
+     * Terminals, and production rules in the format "ruleId: A -> BC".
+     *
+     * @param filePath the path to the file containing serialized grammars
+     * @return a Map from grammar IDs to loaded {@link Grammar} instances
+     * @throws IOException if an I/O error occurs reading or creating the file
+     */
     public static Map<String, Grammar> loadGrammarsFromFile(String filePath) throws IOException {
         Map<String, Grammar> grammars = new HashMap<>();
         File file = new File(filePath);
@@ -76,6 +92,17 @@ public class FileHandler {
         return grammars;
     }
 
+
+    /**
+     * Writes all grammars in the provided map to the specified file. Each grammar is
+     * serialized in a block prefixed by the separator ("===="), then lines for ID, start
+     * symbol, variables, terminals, and each production rule’s {@code toString()} output.
+     * Existing file contents will be overwritten.
+     *
+     * @param filePath the path to the output file
+     * @param grammars a Map of grammar IDs to {@link Grammar} instances to save
+     * @throws IOException if an I/O error occurs writing to the file
+     */
     public static void saveGrammarsToFile(String filePath, Map<String, Grammar> grammars) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (Grammar grammar : grammars.values()) {
@@ -104,6 +131,13 @@ public class FileHandler {
         }
     }
 
+    /**
+     * Saves a single {@link Grammar} to the specified file.
+     *
+     * @param filePath the path to the output file
+     * @param grammar  the {@link Grammar} instance to save
+     * @throws IOException if an I/O error occurs writing to the file
+     */
     public static void saveGrammarToFile(String filePath, Grammar grammar) throws IOException {
         Map<String, Grammar> single = new HashMap<>();
         single.put(grammar.getId(), grammar);

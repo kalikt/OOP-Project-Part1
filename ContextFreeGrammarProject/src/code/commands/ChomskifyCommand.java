@@ -8,6 +8,29 @@ import code.extensions.IsCNF;
 
 import java.util.*;
 
+/**
+ * Command that transforms a grammar into Chomsky Normal Form (CNF) by creating
+ * a new grammar with a unique ID.
+ * <p>
+ * If the specified grammar is already in CNF, no new grammar is created.
+ * Otherwise, a new grammar is created.
+ * </p>
+ * <p>
+ * The algorithm:
+ * <ol>
+ *   <li>Copy all variables and terminals from the original grammar.</li>
+ *   <li>Create new variables for each terminal which is in a rule with more than one terminal,
+ *       mapping each to a new rule of the form V → t.</li>
+ *   <li>For each original rule:
+ *     <ul>
+ *       <li>If it is already of length 1 or 2, add it (substituting terminals as needed).</li>
+ *       <li>If longer, iteratively break it into binary productions by introducing fresh variables.</li>
+ *     </ul>
+ *   </li>
+ *   <li>Add the resulting CNF grammar to the manager and print its new ID.</li>
+ * </ol>
+ * </p>
+ */
 public class ChomskifyCommand implements Command {
     private GrammarManager manager;
 
@@ -15,6 +38,18 @@ public class ChomskifyCommand implements Command {
         this.manager = manager;
     }
 
+    /**
+     * Executes the "chomskify" command.
+     * <p>
+     * Parses {@code args} to find the grammar ID ( {@code args[1]} ).
+     * If the grammar does not exist, prints an error. If it is already in CNF,
+     * notifies the user. Otherwise, constructs a new grammar in CNF form,
+     * assigns it a new ID, and adds it to the manager.
+     * </p>
+     *
+     * @param args the command tokens, where args[0] is "chomskify" and
+     *             args[1] is the ID of the grammar to convert
+     */
     @Override
     public void execute(String[] args) {
         if (args == null || args.length < 2) {

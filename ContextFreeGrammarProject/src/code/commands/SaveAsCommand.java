@@ -6,6 +6,9 @@ import code.GrammarManager;
 
 import java.io.IOException;
 
+/**
+ * Command that saves all currently loaded grammars to a new file path.
+ */
 public class SaveAsCommand implements Command {
     private GrammarManager manager;
 
@@ -13,6 +16,18 @@ public class SaveAsCommand implements Command {
         this.manager = manager;
     }
 
+    /**
+     * Executes the "saveas" command.
+     * <p>
+     * Parses {@code args} to build a new file path from {@code args[1]}.
+     * If no grammars are loaded, prints "No file is currently open."
+     * If the user writes invalid file path, prints usage instructions.
+     * Otherwise, attempts to save all grammars to the new file via {@link FileHandler}.
+     * </p>
+     *
+     * @param args the command tokens, where args[0] is "saveas" and
+     *              args[1] is the path of the file.
+     */
     @Override
     public void execute(String[] args) {
         String currentFilePath = manager.getCurrentFilePath();
